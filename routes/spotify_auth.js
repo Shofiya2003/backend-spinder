@@ -60,15 +60,50 @@ router.get('/callback', spotify.exchangeCode, async (req, res) => {
             }
             data.artistScore = {};
             //find recently played tracks and create scores
-            const newUser = await UserStorage.createUser(data);
+
             await TokenStorage.createToken({
                 spotifyId: spotifyId,
                 accessToken: req.access_token,
                 refreshToken: req.refresh_token
             });
+
+            const tracks = await spotify.getRecentlyPlayed(req.access_token);
+
+            const artistScore = new Map();
+            await Promise.all(tracks.map(track => {
+
+                const artists = track.track.artists;
+
+                artists.map(artist => {
+                    const { id, name } = artist;
+                    console.log(id);
+                    console.log(artistScore);
+                    //if artistScore already has id as the key -> increment the score
+                    if (artistScore.has(id)) {
+                        let artistValue = artistScore.get(id);
+                        console.log(artistValue)
+                        artistValue = {
+                            ...artistValue,
+                            score: artistValue.score + 1
+                        }
+                        artistScore.set(id, artistValue)
+                    } else {
+                        //add the artist to the artistScore
+                        artistScore.set(id, {
+                            name: name,
+                            score: 1
+                        })
+                    }
+                })
+
+            }))
+            console.log(artistScore)
+            data.artistScore = artistScore;
+            const newUser = await UserStorage.createUser(data);
             return res.json({ msg: "successfully logged in with spotify" });
         } else {
             //delete the present token and create a new one
+
 
         }
 
@@ -82,5 +117,6 @@ router.get('/callback', spotify.exchangeCode, async (req, res) => {
     }
 
 })
+
 
 module.exports = router;
