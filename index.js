@@ -11,5 +11,5 @@ app.use(cors());
 const port = process.env.PORT || 8000
 
 app.listen(port, () => {
-    logger.info(`Express server started at port: ${port}`);
+    console.log(`Express server started at port: ${port}`);
 })
