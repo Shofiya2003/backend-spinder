@@ -4,7 +4,8 @@ const router = express.Router();
 const spotify = require('../utils/spotify/spotify');
 
 //token storage db
-const TokenStorage = require('../models/token');
+const TokenStorage = require('../utils/token/tokenStorage');
+const UserStorage = require('../utils/user/userStorage')
 
 spotify.seed();
 
@@ -36,36 +37,40 @@ router.get('/callback', spotify.exchangeCode, async (req, res) => {
 
         //get the user details from spotify
         const user = await spotify.getUserDetails(req.access_token);
-        const { email, display_name: username, country, id: spotifyId, uri: spotifyUri } = user
+        const { email, display_name: username, country, id: spotifyId } = user
 
-        const data = {
-            spotifyId: spotifyId,
-            username: username
-        }
-        if (email) {
-            data.email = email;
-        }
-        if (country) {
-            data.country = country;
-        }
 
-        const uri = spotifyUri.split(":")[2];
-        data.spotifyUri = uri;
-        console.log(`extracted uri ${uri}`)
+        console.log(`spotify id ${spotifyId}`)
 
         //check if user is already registered
+        const registeredUser = await UserStorage.findUser({ spotifyId: spotifyId })
+        console.log("result of user find query", registeredUser);
 
-        //if registered move ahead
+        //if user is not registered create a new user
+        if (!registeredUser) {
+            const data = {
+                spotifyId: spotifyId,
+                username: username
+            }
+            if (email) {
+                data.email = email;
+            }
+            if (country) {
+                data.country = country;
+            }
+            data.artistScore = {};
+            //find recently played tracks and create scores
+            const newUser = await UserStorage.createUser(data);
+            await TokenStorage.createToken({
+                spotifyId: spotifyId,
+                accessToken: req.access_token,
+                refreshToken: req.refresh_token
+            });
+            return res.json({ msg: "successfully logged in with spotify" });
+        } else {
+            //delete the present token and create a new one
 
-        //if not registerd create a user and find the recently played
-
-
-        // const newTokens = new TokenStorage({
-        //     accessToken: req.access_token,
-        //     refreshToken: req.refresh_token
-        // });
-
-        // await newTokens.save();
+        }
 
         // console.log("synced model with database");
 
