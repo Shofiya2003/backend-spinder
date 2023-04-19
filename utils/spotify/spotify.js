@@ -88,13 +88,29 @@ Spotify.prototype.getUserDetails = async (accessToken) => {
                 'Authorization': `Bearer ${accessToken}`
             }
         })
-        
+
         console.log(user.data);
         return user.data;
     } catch (err) {
         console.log(err);
     }
 
+}
+
+Spotify.prototype.getRecentlyPlayed = async (accessToken) => {
+    try {
+        const data = await axios({
+            url: "https://api.spotify.com/v1/me/player/recently-played",
+            method: 'GET',
+            headers: {
+                'Authorization': `Bearer ${accessToken}`
+            }
+        })
+        console.log(data.data)
+        return data.data.items;
+    } catch (err) {
+        console.log(err);
+    }
 }
 
 
