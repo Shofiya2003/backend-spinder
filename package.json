@@ -1,0 +1,26 @@
+{
+  "name": "backend-spinder",
+  "version": "1.0.0",
+  "description": "backend for spinder",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "nodemon index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Shofiya2003/backend-spinder.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Shofiya2003/backend-spinder/issues"
+  },
+  "homepage": "https://github.com/Shofiya2003/backend-spinder#readme",
+  "dependencies": {
+    "body-parser": "^1.20.2",
+    "cors": "^2.8.5",
+    "express": "^4.18.2",
+    "mongoose": "^7.0.4"
+  }
+}
