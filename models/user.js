@@ -15,10 +15,9 @@ const user = new mongoose.Schema({
         required: true
     },
     artistScore: {
-        type: Map,
+        type: [],
         required: true
     },
-
 }, {
     timestamps: true
 })
