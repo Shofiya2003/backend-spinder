@@ -103,7 +103,12 @@ router.get('/callback', spotify.exchangeCode, async (req, res) => {
             return res.json({ msg: "successfully logged in with spotify" });
         } else {
             //delete the present token and create a new one
-
+            await TokenStorage.deleteToken(spotifyId);
+            await TokenStorage.createToken({
+                spotifyId: spotifyId,
+                accessToken: req.access_token,
+                refreshToken: req.refresh_token
+            });
 
         }
 
