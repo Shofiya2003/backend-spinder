@@ -98,7 +98,13 @@ router.get('/callback', spotify.exchangeCode, async (req, res) => {
 
             }))
             console.log(artistScore)
-            data.artistScore = artistScore;
+            let artists = [];
+            artistScore.forEach((value, key) => {
+                value.spotifyId = key;
+                artists.push(value);
+            })
+            console.log(artists);
+            data.artistScore = artists;
             const newUser = await UserStorage.createUser(data);
             return res.json({ msg: "successfully logged in with spotify" });
         } else {
