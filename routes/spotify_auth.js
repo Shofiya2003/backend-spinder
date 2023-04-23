@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-
+const jwt = require('jsonwebtoken')
 const spotify = require('../utils/spotify/spotify');
 
 //token storage db
@@ -100,7 +100,7 @@ router.get('/callback', spotify.exchangeCode, async (req, res) => {
             console.log(artistScore)
             data.artistScore = artistScore;
             const newUser = await UserStorage.createUser(data);
-            return res.json({ msg: "successfully logged in with spotify" });
+
         } else {
             //delete the present token and create a new one
             await TokenStorage.deleteToken(spotifyId);
@@ -112,9 +112,12 @@ router.get('/callback', spotify.exchangeCode, async (req, res) => {
 
         }
 
-        // console.log("synced model with database");
+        const token = jwt.sign({
+            spotifyId: spotifyId,
+            username: username
+        }, process.env.JWT_SECRET)
+        return res.json({ status: "success", user: { spotifyId: spotifyId, jwtToken: token } });
 
-        res.json({ msg: "successfully logged in with spotify" })
     } catch (err) {
         console.log(err);
         console.log(`error in spotify.js callback function: ${err.msg}`);
