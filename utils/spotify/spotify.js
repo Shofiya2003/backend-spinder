@@ -93,6 +93,11 @@ Spotify.prototype.getUserDetails = async (accessToken) => {
         return user.data;
     } catch (err) {
         console.log(err);
+        console.log(err.status);
+        if (err.status === 403) {
+            throw new Error({ message: "User not registered on developer dashboard" });
+        }
+        throw new Error({ message: "something went wrong while fetching spotify user details" })
     }
 
 }
