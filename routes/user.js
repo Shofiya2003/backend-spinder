@@ -60,7 +60,7 @@ router.get('/potentialMatches', async (req, res) => {
 
             {
                 $sort: {
-                    "matchingScore": 1
+                    "matchingScore": -1
                 }
             }
         ])
