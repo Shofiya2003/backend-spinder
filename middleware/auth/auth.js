@@ -1,18 +1,23 @@
 const jwt = require("jsonwebtoken");
 const authMiddleware = async (req, res, next) => {
     try {
-        const token = req.headers['authorization'].split(' ')[1];
-        console.log(token);
-        
+        //if the session does not have the token or the userId delete it 
+        if (!req.session.isPopulated || !req?.session?.token || !req?.session?.userId) {
+            req.session = null
+            return res.json({ status: "error", msg: "user not loggedin" })
+        }
+
+        const { token, userId } = req.session;
+
+
         if (!token) {
             return res.json({ status: "error", msg: "jwt token missing" });
         }
         if (!jwt.verify(token, process.env.JWT_SECRET)) {
             return res.json({ status: "error", msg: "invalid jwt token" });
         }
-        const data = jwt.decode(token);
-        console.log(data);
-        res.spotifyId = data.spotifyId;
+
+        res.spotifyId = spotifyId;
         next();
     } catch (err) {
         console.log(err);

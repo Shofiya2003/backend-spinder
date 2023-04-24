@@ -1,13 +1,21 @@
 const express = require('express');
 const bodyparser = require('body-parser');
 const cors = require('cors');
-const mongoose = require('mongoose')
+const mongoose = require('mongoose');
+const cookieSession = require('cookie-session');
+const app = express();
+
+app.use(cookieSession({
+    name: 'session',
+    secret: 'secret',
+    // Cookie Options
+    maxAge: 24 * 60 * 60 * 1000 // 24 hours
+}))
 
 require('dotenv').config();
 
 const api = require('./routes/api')
 
-const app = express();
 
 app.use(bodyparser.json())
 
