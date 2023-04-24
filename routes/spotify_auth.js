@@ -19,7 +19,7 @@ router.get('/', async (req, res) => {
 
     } catch (err) {
         console.log("error in athuenticating spotify");
-        return res.json({ msg: "something went wrong in spotify authentication" });
+        return res.redirect("http://localhost:3000/login");
     }
 
 })
@@ -130,12 +130,16 @@ router.get('/callback', spotify.exchangeCode, async (req, res) => {
             spotifyId: spotifyId,
             username: username
         }, process.env.JWT_SECRET)
-        return res.json({ status: "success", user: { spotifyId: spotifyId, jwtToken: token } });
+
+        req.session.token = token;
+        req.session.spotifyId = spotifyId;
+        // res.json({ status: "success", user: { spotifyId: spotifyId, jwtToken: token } });
+        res.redirect("http://localhost:3000/xyz")
 
     } catch (err) {
         console.log(err);
         console.log(`error in spotify.js callback function: ${err.msg}`);
-        res.json({ msg: "something went wrong" });
+        return res.redirect(`http://localhost:3000/login/`);
     }
 
 })

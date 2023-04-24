@@ -27,10 +27,12 @@ Spotify.prototype.exchangeCode = async (req, res, next) => {
         console.log(code);
         if (!code) {
             const { error } = req.query;
-            console.log(req.query.error);
             console.log("error in spotify authentication");
-            res.json("something went wrong");
-            return;
+            if (error === "access_denied") {
+                return res.redirect(`http://localhost:3000/login/${error}`);
+            }
+            console.log(req.query.error);
+            return res.redirect(`http://localhost:3000/login/`);
         }
 
         const options = {
@@ -59,7 +61,7 @@ Spotify.prototype.exchangeCode = async (req, res, next) => {
     } catch (err) {
         console.log(err);
         console.log(`something is wrong in spotify.js : ${err.msg}`);
-        res.json({ msg: "something went wrong" });
+        return res.redirect(`http://localhost:3000/login/`);
     }
 }
 
