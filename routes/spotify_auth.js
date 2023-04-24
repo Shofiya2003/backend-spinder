@@ -37,8 +37,12 @@ router.get('/callback', spotify.exchangeCode, async (req, res) => {
 
         //get the user details from spotify
         const user = await spotify.getUserDetails(req.access_token);
-        const { email, display_name: username, country, id: spotifyId } = user
+        const { email, display_name: username, country, id: spotifyId, images } = user
 
+        //username can be null
+        if (!username) {
+            username = "";
+        }
 
         console.log(`spotify id ${spotifyId}`)
 
@@ -57,6 +61,10 @@ router.get('/callback', spotify.exchangeCode, async (req, res) => {
             }
             if (country) {
                 data.country = country;
+            }
+
+            if (images && images.length !== 0) {
+                data.profilePicture = images[0].url;
             }
             data.artistScore = {};
             //find recently played tracks and create scores

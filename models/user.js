@@ -18,6 +18,9 @@ const user = new mongoose.Schema({
         type: Map,
         required: true
     },
+    profilePicture: {
+        type: String
+    }
 
 }, {
     timestamps: true
