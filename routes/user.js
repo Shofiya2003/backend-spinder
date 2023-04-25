@@ -88,4 +88,18 @@ router.get('/potentialMatches', authMiddleware, async (req, res) => {
     }
 })
 
+router.patch('/', authMiddleware, async (req, res) => {
+    try {
+        const spotifyId = req.spotifyId;
+        const { username } = req.body;
+        const data = {
+            username: username
+        }
+        UserStorage.updateUser(spotifyId, data);
+        return res.json({ status: 'success', msg: 'updated profile' })
+    } catch (err) {
+        console.log(err);
+        return res.json({ status: 'error', msg: 'update failed' })
+    }
+})
 module.exports = router;

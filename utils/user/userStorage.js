@@ -20,6 +20,16 @@ class UserStorage {
         }
 
     }
+
+    async updateUser(spotifyId, data) {
+        try {
+            const user = await User.findOneAndUpdate({ spotifyId: spotifyId }, data);
+            
+        } catch (err) {
+            console.log(err);
+            throw new Error(err.message)
+        }
+    }
 }
 
 module.exports = new UserStorage();
